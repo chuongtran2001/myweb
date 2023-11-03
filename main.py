@@ -7,7 +7,7 @@ import os
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'KietTT Python-Flask Web App'
+app.config['SECRET_KEY'] = 'Chuong Python-Flask Web App'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'app.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -18,10 +18,49 @@ import models
 
 @app.route('/')
 def main():
-    #return "Hello World! This is a content of Python and Flask web application."
-
-    return render_template('index.html')
-
+   # return "Hello, world! this is a content of python and flask web application"
+    todolist = [
+        {
+            'name':'Buy milk',
+            'description': 'Buy 2 liters of milk in coopmart.'
+        },
+        {
+            'name': 'Get money',
+            'description': 'Get 500k from ATM'
+        }
+    ]
+    return render_template('index.html', todolist = todolist)
+    # todolist = [
+    #     {
+    #         'name':'Buy milk',
+    #         'description': 'Buy 2 liters of milk in coopmart.'
+    #     },
+    #     {
+    #         'name': 'Get money',
+    #         'description': 'Get 500k from ATM'
+    #     }
+    # ]
+    
+    # return'''
+    # <html>
+    #     <head>
+    #         <title>To do list app </title>
+    #     </head>
+    #     <body>
+    #         <div>
+    #             <h1>To do list App </h1>
+    #             <p>
+    #                 <a href="#">Sign   up now <a>
+    #             </p>
+    #         </div>
+    #         <div>
+    #             <h4>''' + todolist[0]['name'] + '''</h4>
+    #             <p>''' + todolist[0]['description'] + '''</p>
+    #             <h4>''' + todolist[1]['name'] + '''</h4>
+    #             <p>''' + todolist[1]['description'] + '''</p>
+    #         </div>
+    #     </body>
+    # </html>'''
 @app.route('/signUp', methods=['GET', 'POST'])
 def showSignUp():
     form = SignUpForm()
@@ -290,64 +329,5 @@ def userProject():
         return render_template('userproject.html', user = user)
     else:
         return redirect('/')
-
-@app.route('/searchTask', methods=['GET', 'POST'])
-def searchTask():
-    _user_id = session.get('user')
-    if _user_id:
-        user = db.session.query(models.User).filter_by(user_id=_user_id).first()
-        search_query = request.form['search_query']  # Truy vấn tìm kiếm từ form
-
-        # Tìm kiếm các task có trạng thái phù hợp với truy vấn tìm kiếm
-        tasks = db.session.query(models.Task).filter(models.Task.status.has(models.Status.description.ilike(f'%{search_query}%'))).all()
-
-        return render_template('usertask.html', user=user, tasks=tasks, search_query=search_query)
-    else:
-        return redirect('/')
-
-@app.route('/searchProject', methods=['GET', 'POST'])
-def searchProject():
-    _user_id = session.get('user')
-    if _user_id:
-        user = db.session.query(models.User).filter_by(user_id=_user_id).first()
-        search_query = request.form['search_query']  # Truy vấn tìm kiếm từ form
-
-        # Tìm kiếm các project có trạng thái phù hợp với truy vấn tìm kiếm
-        projects = db.session.query(models.Project).filter(models.Project.status.has(models.Status.description.ilike(f'%{search_query}%'))).all()
-        print(projects)
-
-        return render_template('userprojectsearch.html', user=user, projects=projects, search_query=search_query)
-    else:
-        return redirect('/')
-
-@app.route('/searchByNameTask', methods=['POST'])
-def search_by_name_task():
-    _user_id = session.get('user')
-    if _user_id:
-        user = db.session.query(models.User).filter_by(user_id=_user_id).first()
-        search_name_query = request.form['search_name_query']  # Truy vấn tìm kiếm từ form
-
-        # Tìm kiếm các task có mô tả chứa truy vấn tìm kiếm
-        tasks = db.session.query(models.Task).filter(models.Task.description.ilike(f'%{search_name_query}%')).all()
-
-        return render_template('usertask.html', user=user, tasks=tasks, search_name_query=search_name_query)
-    else:
-        return redirect('/')
-
-@app.route('/searchByNameProject', methods=['POST'])
-def search_by_name_project():
-    _user_id = session.get('user')
-    if _user_id:
-        user = db.session.query(models.User).filter_by(user_id=_user_id).first()
-        search_name_query = request.form['search_name_query']  # Truy vấn tìm kiếm từ form
-
-        # Tìm kiếm các task có mô tả chứa truy vấn tìm kiếm
-        projects = db.session.query(models.Project).filter(models.Project.name.ilike(f'%{search_name_query}%')).all()
-
-        return render_template('userprojectsearch.html', user=user, projects=projects, search_name_query=search_name_query)
-    else:
-        return redirect('/')
-
-
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port='8080', debug=True)
