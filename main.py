@@ -116,7 +116,7 @@ def userHome():
         projects = user.projects
         tasks = []
         for project in projects:
-            tasks.extend(project.tasks)  # Gộp tất cả các nhiệm vụ từ các dự án thành một danh sách
+            tasks.extend(project.tasks)  
 
         return render_template('userhome.html', user=user, projects=projects, tasks=tasks)
     else:
@@ -130,7 +130,7 @@ def userTask():
         projects = user.projects
         tasks = []
         for project in projects:
-            tasks.extend(project.tasks.copy())  # Sử dụng bản sao của danh sách tasks
+            tasks.extend(project.tasks.copy())  
 
         return render_template('usertask.html', user=user, projects=projects, tasks=tasks)
     else:
@@ -161,11 +161,11 @@ def newTask():
             projects = user.projects
 
             if project and _deadline > project.deadline:
-                flash("Deadline of the task cannot be later than the project's deadline.")
+                flash("deadline task không được muộn hơn deadline của project")
                 return render_template('/newtask.html', form=form, user=user)
 
             if status.description == "Đang thực hiện":
-                project.status_id = 2  # Giả sử 2 là mã trạng thái 'Đang thực hiện' trong bảng trạng thái của project
+                project.status_id = 2 
 
 
 
@@ -197,7 +197,7 @@ def update_project_status(projects):
 
     all_completed = all(task.status_id == 4 for task in tasks)
     if all_completed:
-        project.status_id = 4  # Chuyển sang trạng thái "Hoàn thành"
+        project.status_id = 4 
     else:
         project.status_id = 2
     db.session.commit()
